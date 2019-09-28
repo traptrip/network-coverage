@@ -194,7 +194,30 @@ function addManueversToMap(route){
 
 Number.prototype.toMMSS = function () {
     return  Math.floor(this / 60)  +' minutes '+ (this % 60)  + ' seconds.';
-}
+};
+
+
+// Create a provider for a semi-transparent heat map:
+var heatmapProvider = new H.data.heatmap.Provider({
+  colors: new H.data.heatmap.Colors({
+  '0': 'blue',
+  '0.5': 'yellow',
+  '1': 'red'
+  }, true),
+  opacity: 0.75,
+  type: "value",
+  // Paint assumed values in regions where no data is available
+  assumeValues: false
+});// Add the data
+
+heatmapProvider.addData([
+  {lat: 52, lng: 50, value: 1},
+  {lat: 53, lng: 50, value: 2}
+]);
+
+// Add the layer to the map
+map.addLayer(new H.map.layer.TileLayer(heatmapProvider));
+
 
 calculateRouteFromAtoB (platform);
 alert('Done');
