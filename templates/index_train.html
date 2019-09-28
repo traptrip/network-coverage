@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ru-RU"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Cотовое покрытие (Поезд)</title>
+    
+    <link rel="stylesheet" href="files/main.css">
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel="stylesheet" type="text/css" href="demo.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="../template.css" />
+    <script type="text/javascript" src='../test-credentials.js'></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-data.js"></script>
+    </head>
+  <body>
+        <header class="block page-header white ontop">
+          <div class="content"><a class="logo-link" href="Volunteer.html"></a>
+            <ul class="main-menu ru-menu">
+             <li class="main-menu-item nm"><a class="main-menu-link w-arrow" id="services-link" href="/">На главную</a>
+                <ul class="submenu-popup" id="serv-popup">
+                  <li><a href="" target="_blank">#####</a></li>
+                  <li><a href="" target="_blank">#####</a></li>
+                </ul>
+              </li>
+              <li class="main-menu-item"><a class="main-menu-link" href="####">Контакты</a></li>
+            </ul>
+          </div>
+        </header>
+        
+    <div class="block school-plate-block mobdev-school-plate white">
+      <div class="content">
+        <img class="ab-pic" src="files/bchb.jpg">
+        <div class="school-infoplate">
+          <h2 class="common-title">Отправляетесь в<br>путешествие<br> по России?</h2>
+          <p class="bigger-text listy"><span>Но боитесь остаться без связи?</span></p>
+          <p class="blog-plate-text listy"><span>С нашей картой покрытия сотовой связи<br> вы <strong>всегда</strong> будете знать, где плохая сеть</span></p>
+<!--          <a class="blue-btn car" href="#transport">Выберите нужный вид транспорта</a>-->
+            <p class="bigger-text listy"><span>Выберите нужный вид транспорта ниже</span></p>
+        </div>
+      </div>
+    </div>
+
+        <div class="box" id="transport">
+   <div class="div1">
+          <h2 class="common-title car" style="margin-top:40px;">Передвигаюсь<br> на машине</h2>
+          <a class="blue-btn car" href="#request" style="margin-left:250px;">Указать путь следования</a>
+
+   </div>
+   <div class="div2">
+          <h2 class="common-title train" style="margin-left: 1250px; margin-top: 0px;padding-top: 40px;">Передвигаюсь<br> на поезде</h2>
+          <a class="blue-btn train" href="#request" style="margin-left:300px;">Указать путь следования</a>
+       </div>
+   <div class="clear">
+</div>
+    <div class="block form-block">
+      <div class="content">
+      <div class="form-part">
+<!--        <h1 class="huge-title">Хочу знать сотовое покрытие на пути следования поезда</h1>-->
+        <form id="get_address" method="POST" action="Success.html#request">
+<!--          <input type="text" id="client_phone" name="phone"  required="" placeholder="Ваш номер телефона" maxlength="17">-->
+<!--          <input type="text" id="client_name" name="name" required="" placeholder="Как вас зовут?">-->
+<!--          <input type="text" id="address" name="address" required="" placeholder="Ваш адрес"><br>-->
+<!--          <p class="terms">Нажимая кнопку ниже, я&nbsp;соглашаюсь<br><a href="">с&nbsp;условиями пользовательского соглашения</a></p>-->
+<!--          <input class="blue-btn" type="submit" value="Отправить данные" onclick = send()>-->
+        </form>
+      </div>
+    </div>
+  </div>
+<div class="footer-grid-part"> </div>
+        <div id="markers-on-the-map">
+
+        <div class="page-header" > </div>
+          <h3 id="request" class="padd"></h3>
+          <h3 class="not_huge-title">Выберите доступный путь следования:</h3>
+            <a class="blue-btn train" href="/train#request" style="margin-left:900px; margin-top:-85px; position:absolute;" onclick=get_route_TRAIN()>013У (Челябинск-Москва)</a>
+
+
+          <p class="blog-plate-text listy" style="margin-left:40px; padding-bottom:20px; margin-top:-20px;">В скором времени станут доступны все возможные направления</p>
+        <div id="map"></div>
+        </div>
+
+<script type="text/javascript" src='demo.js'></script>
+
+  
+  <div class="footer-grid-part"> </div>
+  
+  <style>
+    
+.form-block .blue-btn {
+  margin-bottom: 35px;
+    margin-top: 0px;
+}
+#map {
+    width: 95%;
+    height: 800px;
+    background: white;
+    padding-left: 40px;
+}
+
+  </style>
+  
+  <script>
+  var socket = new WebSocket("ws://192.168.1.230:8765");
+socket.onopen = function() {
+  alert("Соединение установлено.");
+};
+
+function send(){
+
+    var address = document.getElementById("address").value;
+    var client_phone = document.getElementById("client_phone").value;
+    var client_name = document.getElementById("client_name").value;
+    var data = {"jsonrpc": "2.0",
+                "method": "add_task",
+                "params": {'client_name': client_name,
+                           'address': address,
+                           'client_phone': client_phone},
+                "id": 0};
+                
+    d = JSON.stringify(data);
+    socket.send(d);
+    document.getElementById("get_address").submit();
+    };
+
+
+  
+  </script>
+    <script src="files/main.js"></script>
+    
+        <style>
+        div.box {
+  background: #207eb1;
+  height: 300px;
+  width: 100%;
+}
+
+div.div1 {
+  background: #BAE3FF;
+  float: left;
+  height: 100%;
+  width: 50%;
+}
+
+div.div2 {
+  background: #FFE3BA;
+  height: 100%;
+}
+
+div.clear {
+  clear: both;
+  height: 1px;
+  overflow: hidden;
+  font-size: 0pt;
+  margin-top: -1px;
+}
+
+
+          @charset "UTF-8";
+html{
+    line-height:1.15;
+    -ms-text-size-adjust:100%;
+    -webkit-text-size-adjust:100%
+}
+body{margin:0}
+header,main{display:block}
+.padd{
+  padding:10px;
+}
+h1{
+    font-size:2em;
+    margin:.67em 0
+}
+a{
+    background-color:transparent;
+    -webkit-text-decoration-skip:objects
+}
+img{border-style:none}
+
+
+.school-plate-block.bc-school-plate .ab-pic {
+    bottom: 0;
+    right: -300px;
+}
+.ab-pic {
+    display: inline-block;
+    position: absolute;
+    right: -500px;
+}
+img {
+    border-style: none;
+}
+button,input,select,textarea{
+    font-family:sans-serif;
+    font-size:100%;
+    line-height:1.15;
+    margin:0
+}
+button,input{overflow:visible}
+button,select{text-transform:none}
+textarea{overflow:auto}
+*{
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    outline:0;
+    border:none;
+    text-decoration:none;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent
+}
+
+body,html{
+    text-rendering:optimizeLegibility;
+    width:100%;
+    max-width:100%;
+    height:100%
+}
+body{position:relative;overflow-x:hidden}
+body.blocked,html.blocked{overflow:hidden!important}
+h1,h2,h3,h4,h5,h6{font-weight:400}
+input,textarea{-webkit-appearance:none}
+@font-face{
+    font-family: 'Circe-Bold';
+    url('../fonts/Circe.ttf') format('truetype'),
+    font-weight: normal;
+    font-style: normal;
+}
+h1, h2, h3 {
+    font-family: Circe-Bold,sans-serif;
+}
+p{
+    display: block;
+    width: 100%;
+    font-size: 30px;
+    font-family: Circe-Bold, sans-serif;
+}
+.block{
+    width:100%;
+    min-width:1400px;
+    position:relative
+}
+.content{
+    width:1200px;
+    position:relative;
+    padding-left:30px;
+    padding-right:30px;
+    margin:0 auto
+}
+.page-header{
+    position:fixed;
+    top:0;left:0;
+    height:68px;
+    z-index:100;
+    -webkit-transition:all .3s linear;
+    -o-transition:all .3s linear;
+    transition:all .3s linear;
+    background:#fff
+}
+
+
+.page-header .content{padding-top:25px}
+.page-header.ontop .logo-link:before{opacity:1}
+.page-header.ontop .logo-link:after{opacity:0}
+.logo{width:167px;
+    height:15px;
+    display:inline-block;
+    -webkit-transition:all .3s linear;
+    -o-transition:all .3s linear;
+    transition:all .3s linear;
+    position:relative
+}
+.logo:hover{opacity:.5}
+.main-menu{float:right;
+    font-family:Circe-Bold,sans-serif
+}
+.main-menu .main-menu-item{
+    display:inline-block;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-left:30px;
+    position:relative
+}
+.main-menu .main-menu-item:first-child{margin-left:0}
+.main-menu.ru-menu .main-menu-item{margin-left:26px}
+.main-menu .main-menu-link{
+    display:inline-block;
+    -webkit-transition:all .3s linear;
+    -o-transition:all .3s linear;
+    transition:all .3s linear
+}
+.main-menu .main-menu-link.w-arrow{padding-right:13px;position:relative}
+.main-menu .main-menu-link.w-arrow:before{
+    content:'';
+    width:0;height:0;
+    border:3px solid transparent;
+    position:absolute;
+    right:0;top:4px;
+    border-top-color:#000;
+    -webkit-transition:all .3s linear;-
+    o-transition:all .3s linear;
+    transition:all .3s linear;
+    transition:all .3s linear
+}
+.main-menu .main-menu-link.w-arrow:hover:before{border-top-color:#1c5ced}
+.main-menu .main-menu-link.w-arrow.opened{color:#1c5ced}
+.main-menu .main-menu-link:hover{color:#1c5ced}
+.main-menu .main-menu-link.active{color:#1c5ced}
+.main-menu .main-menu-link.active:before{
+    border-top-color:#1c5ced!important
+
+}
+.submenu-popup{position:absolute;
+    background:#fff;
+    -webkit-border-radius:7px;
+    border-radius:7px;
+    -webkit-box-shadow:0 3px 13px 0 rgba(70,70,70,.15);
+    box-shadow:0 3px 13px 0 rgba(70,70,70,.15);
+    padding:12px 0 16px 0;
+    top:30px;left:-27px;
+    opacity:0;
+    visibility:hidden;
+    -webkit-transition:all .3s linear;
+    -o-transition:all .3s linear;
+    transition:all .3s linear
+}
+.submenu-popup.visible{
+    opacity:1;
+    visibility:visible
+}
+.submenu-popup#serv-popup{width:310px}
+.submenu-popup#about-popup{width:217px}
+.submenu-popup a{
+    display:block;
+    padding:12px 32px 12px 27px;
+    color:#000!important
+}
+.submenu-popup a.active{color:#1c5ced}
+.submenu-popup a:hover{
+    background:#f3f7fe;
+    color:#1c5ced!important
+}
+
+.huge-title{font-size:72px;
+    line-height:80px
+}
+.not_huge-title{font-size:44px; padding:40px;
+}
+.white{color:#fff}
+
+.common-title{font-size:56px}
+.common-text{
+    font-size:18px;
+    line-height:25px;
+    color:#262c34
+}
+.common-title{margin-bottom:80px}
+.common-title.car{margin-bottom:10px; margin-left:250px;}
+.common-title.train{margin-bottom:10px; margin-right:-550px;}
+.blog-plate-text{
+    font-size:24px;
+    opacity:.7;
+    line-height:32px
+}
+.listy{line-height:42px}
+.blog-plate-text.listy{line-height:32px}
+.blog-plate-text.listy span{
+    display:inline-block;
+    margin-bottom:5px
+}
+a.blue-btn.car{margin-left:200px;}
+.blue-btn{display:inline-block;
+    background:#1c5ced;
+    color:#fff;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    font-size:13px;
+    font-family:Circe-Bold,sans-serif;
+    height:50px;
+    line-height:49px;
+    text-align:center;
+    padding:0 35px;
+    -webkit-border-radius:4px;
+    border-radius:4px;
+    min-width:180px
+}
+.blue-btn:hover{background:#3870ef}
+.blue-btn.bog-btn{width:180px}
+.blue-btn.wm{margin-left:21px}
+.blue-btn.bmt{margin-top:40px}
+.blue-btn.car{margin-left:250px;}
+.school-plate-block .content{
+    height:600px;
+    display:-webkit-box;
+    display:-webkit-flex;
+    display:-ms-flexbox;
+    display:flex
+}
+.school-plate-block.mobdev-school-plate{
+    background:#207ebd;
+    overflow:hidden}
+.school-infoplate{
+    position:relative;
+    z-index:15;
+    height:100%;
+    padding-top:112px
+}
+.school-infoplate .common-title{margin-bottom:15px}
+.school-infoplate .bigger-text{margin-bottom:30px}
+.school-infoplate .blog-plate-text{margin-bottom:40px}
+.form-part-wrapper{margin-bottom:200px}
+form{width:575px}
+input,textarea{
+    display:block;
+    width:100%;
+    font-size:30px;
+    font-family:Circe-Bold,sans-serif;
+    border-bottom:2px solid #ebebeb;
+    padding-bottom:20px!important;
+    margin-top:30px;
+    -webkit-border-radius:0;
+    border-radius:0;
+    -webkit-appearance:none
+}
+input.blue-btn{width:200px;
+    cursor:pointer;
+    -webkit-transition:all .3s linear;
+    -o-transition:all .3s linear;
+    transition:all .3s linear;
+    padding-right:0;
+    padding-left:0
+}
+.terms{font-size:18px;
+    margin-bottom:30px
+}
+.terms a{color:#1c5ced}
+.terms a:hover{text-decoration:underline}
+
+
+.footer-grid-part{
+    height : 140px;
+    border-top:2px solid #f5f5f5;
+    border-bottom:2px solid #f5f5f5;
+    font-size:14px
+}
+.footer-grid-part .content{padding:50px 30px 85px 30px}
+.page-footer .logo{opacity:.25}
+@media (max-width:650px){.legal-text br{display:block!important}
+.content{height:auto}
+.big-title{font-size:36px}
+.content{padding:80px 30px 40px 30px}
+        </style>
+
+        <script>
+          function switchMapLanguage(map, platform){
+
+    let defaultLayers = platform.createDefaultLayers({
+        lg: 'ru'
+    });
+    map.setBaseLayer(defaultLayers.vector.normal.map);
+
+    var ui = H.ui.UI.createDefault(map, defaultLayers, 'ru-RU');
+
+    ui.removeControl('mapsettings');
+}
+
+
+var mapContainer = document.getElementById('map'),
+    routeInstructionsContainer = document.getElementById('panel');
+var platform = new H.service.Platform({
+    apikey: "1w5O8XpMpthHnoTrBw1NqsXyrIiug4cGfyy-B-ag-M4"
+});
+
+
+function onSuccessGeocode(result) {
+    var location = result.Response.View[0].Result[0];
+    alert(JSON.stringify(location.Location));
+    return location.Location.Address.Label;
+}
+
+function get_location(coord) {
+    var reverseGeocodingParameters = {
+        prox: coord['lat']+','+coord['lng'],
+        mode: 'retrieveAddresses',
+        maxresults: 1
+    };
+    alert('cvxv');
+    var geocoder = platform.getGeocodingService();
+    geocoder.reverseGeocode(
+        reverseGeocodingParameters,
+        onSuccessGeocode,
+        function(e) { alert(e); });
+
+}
+
+
+var defaultLayers = platform.createDefaultLayers();
+
+var map = new H.Map(mapContainer,
+    defaultLayers.vector.normal.map,{
+        center: {lat:53.5160, lng:37.3779},
+        zoom: 6,
+        pixelRatio: window.devicePixelRatio || 1
+    });
+
+
+function calculateRouteFromAtoB (platform, coords) {
+    var router = platform.getRoutingService(),
+        routeRequestParams = {
+            mode: 'fastest;car',
+            representation: 'display',
+            routeattributes : 'waypoints,summary,shape,legs',
+            maneuverattributes: 'direction,action',
+            waypoint0: coords[0]['lat']+','+coords[0]['lng'],
+            waypoint1: coords[1]['lat']+','+coords[1]['lng']
+        };
+    router.calculateRoute(
+        routeRequestParams,
+        onSuccess,
+        onError
+    );
+}
+
+
+function onSuccess(result) {
+    var route = result.response.route[0];
+
+    addRouteShapeToMap(route);
+    // addManueversToMap(route);
+}
+
+
+function onError(error) {
+    alert('Can\'t reach the remote server');
+}
+
+// add a resize listener to make sure that the map occupies the whole container
+window.addEventListener('resize', () => map.getViewPort().resize());
+var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+// Hold a reference to any infobubble opened
+var bubble;
+
+function openBubble(position, text){
+    if(!bubble){
+        bubble =  new H.ui.InfoBubble(
+            position,
+            // The FO property holds the province name.
+            {content: text});
+        ui.addBubble(bubble);
+    } else {
+        bubble.setPosition(position);
+        bubble.setContent(text);
+        bubble.open();
+    }
+}
+
+
+function addRouteShapeToMap(route){
+
+
+    var lineString = new H.geo.LineString(),
+        polyline;
+
+    var routeShape = route.shape;
+    routeShape.forEach(function(point) {
+        var parts = point.split(',');
+        lineString.pushLatLngAlt(parts[0], parts[1]);
+    });
+    polyline = new H.map.Polyline(lineString, {
+        style: {
+            lineWidth: 4,
+            strokeColor: 'rgba(0, 128, 255, 0.7)'
+        }
+    });
+    // Add the polyline to the map
+    map.addObject(polyline);
+    // And zoom to its bounding rectangle
+    map.getViewModel().setLookAtData({
+        bounds: polyline.getBoundingBox()
+    });
+}
+
+
+function addMarkerToGroup(group, coordinate, html) {
+  var marker = new H.map.Marker(coordinate);
+  // add custom data to the marker
+  marker.setData(html);
+  group.addObject(marker);
+}
+var group = new H.map.Group();
+function addInfoBubble(map, lat, lng, html) {
+
+  map.addObject(group);
+  group.addEventListener('tap', function (evt) {
+    var bubble =  new H.ui.InfoBubble(evt.target.getGeometry(), {
+      content: evt.target.getData()
+    });
+    ui.addBubble(bubble);
+  }, false);
+
+  addMarkerToGroup(group, {lat:lat, lng:lng},html);
+  // addMarkerToGroup(group, {lat:53.430, lng:-2.961},'Liverpool');
+}
+function addManueversToMap(route){
+        var group = new  H.map.Group(),
+        i,
+        j;
+
+    for (i = 0;  i < route.leg.length; i += 1) {
+        for (j = 0;  j < route.leg[i].maneuver.length; j += 1) {
+            // Get the next maneuver.
+            maneuver = route.leg[i].maneuver[j];
+            // Add a marker to the maneuvers group
+            var marker =  new H.map.Marker({
+                lat: maneuver.position.latitude,
+                lng: maneuver.position.longitude} ,
+            );
+            // alert(get_location(maneuver.position.latitude, maneuver.position.longitude));
+            marker.instruction = maneuver.instruction;
+            group.addObject(marker);
+        }
+    }
+
+    group.addEventListener('tap', function (evt) {
+        map.setCenter(evt.target.getGeometry());
+        openBubble(
+            evt.target.getGeometry(), evt.target.instruction);
+    }, false);
+
+    map.addObject(group);
+}
+
+
+function createCallback(len, item, num, lat_lng_list) {
+  return function(data) {
+    var lat = data['Response']['View'][0]['Result'][0]['Location']['DisplayPosition']['Latitude'];
+    var lng = data['Response']['View'][0]['Result'][0]['Location']['DisplayPosition']['Longitude'];
+    addInfoBubble(map, lat, lng, item);
+    lat_lng_list.push({lat:lat, lng:lng});
+    if (len-1 <= num){
+      addRouteShapeToMap_TRAIN(lat_lng_list);
+    }
+    // addMarkerToGroup(group, {lat:lat, lng:lng}, city);
+  };
+}
+
+function get_route_TRAIN(){
+
+  var lat_lng_list = [];
+  var list = 'Челябинск,Миасс-1,Златоуст,Бердяуш, Усть-Катав,Уфа,Абдулино,Бугуруслан' +
+      ',Похвистнево,Самара,Сызрань,Рузаевка,Рязань,Москва Казанская',
+      len = list.split(',').length;
+  var seplist = list.split(',');
+  for (var city_num in seplist){
+
+    var city = seplist[city_num];
+    var url = 'https://geocoder.api.here.com/6.2/geocode.json?searchtext='+city+'&app_id=ZTBMxHwg26B6S3l3Keb5&app_code=SGmKOd_JWvUtGi9OrX0BRA&gen=9';
+    $.getJSON(url, createCallback(len, city, city_num, lat_lng_list));
+
+  }
+}
+<!--get_route_TRAIN();-->
+
+function addRouteShapeToMap_TRAIN(route){
+  var lineString = new H.geo.LineString(),
+      polyline;
+
+  route.forEach(function(point) {
+    lineString.pushLatLngAlt(point['lat'], point['lng']);
+  });
+  polyline = new H.map.Polyline(lineString, {
+    style: {
+      lineWidth: 4,
+      strokeColor: 'rgba(0, 128, 255, 0.7)'
+    }
+  });
+  // Add the polyline to the map
+  map.addObject(polyline);
+  // And zoom to its bounding rectangle
+  map.getViewModel().setLookAtData({
+    bounds: polyline.getBoundingBox()
+  });
+}
+
+// calculateRouteFromAtoB (platform);
+switchMapLanguage(map, platform);
+
+
+function addDraggableMarker(map, behavior){
+    var marker = new H.map.Marker({lat:55.9028, lng:48.1148}, {
+        // mark the object as volatile for the smooth dragging
+        volatility: true
+    });
+    marker.draggable = true;
+    map.addObject(marker);
+
+    map.addEventListener('dragstart', function(ev) {
+        var target = ev.target,
+            pointer = ev.currentPointer;
+        if (target instanceof H.map.Marker) {
+            var targetPosition = map.geoToScreen(target.getGeometry());
+            target['offset'] = new H.math.Point(pointer.viewportX - targetPosition.x, pointer.viewportY - targetPosition.y);
+            behavior.disable();
+        }
+    }, false);
+
+
+    map.addEventListener('dragend', function(ev) {
+        var target = ev.target;
+        if (target instanceof H.map.Marker) {
+            behavior.enable();
+        }
+    }, false);
+
+    map.addEventListener('drag', function(ev) {
+        var target = ev.target,
+            pointer = ev.currentPointer;
+        if (target instanceof H.map.Marker) {
+            target.setGeometry(map.screenToGeo(pointer.viewportX - target['offset'].x, pointer.viewportY - target['offset'].y));
+        }
+    }, false);
+}
+// Add the click event listener.
+// addDraggableMarker(map, behavior);
+
+function setUpClickListener(map) {
+    var count = 0;
+    var coords = [];
+    map.addEventListener('tap', function d(evt) {
+        count += 1;
+        if (count > 2){
+            map.removeEventListener('tap', d, false);
+            return;
+        }
+        var coord = map.screenToGeo(evt.currentPointer.viewportX,
+            evt.currentPointer.viewportY);
+        coords.push(coord);
+        var group = new  H.map.Group();
+        // get_location(coord);
+        var marker = new H.map.Marker(coord, {
+            // mark the object as volatile for the smooth dragging
+            volatility: true
+        });
+        marker.draggable = true;
+        if (count == 1){
+        marker.instruction = 'Начало пути';}
+        else {
+            if(count==2){
+                marker.instruction = 'Конец пути';}
+            }
+        // marker.draggable = true;
+        openBubble(
+            marker.getGeometry(), marker.instruction);
+        map.addObject(marker);
+        if(count==2){
+            calculateRouteFromAtoB(platform, coords);
+            // addRouteShapeToMap(coords);
+        }
+
+
+    });
+}
+
+
+// Step 4: create custom logging facilities
+var logContainer = document.createElement('ul');
+logContainer.className ='log';
+logContainer.innerHTML = 'Try clicking on the map';
+map.getElement().appendChild(logContainer);
+
+// Helper for logging events
+function logEvent(str) {
+    var entry = document.createElement('li');
+    entry.className = 'log-entry';
+    entry.textContent = str;
+    alert(entry);
+    logContainer.insertBefore(entry, logContainer.firstChild);
+}
+
+
+<!--setUpClickListener(map);-->
+
+// Create a provider for a semi-transparent heat map:
+var megafonHeatmap = new H.data.heatmap.Provider({
+  colors: new H.data.heatmap.Colors({
+  '0': 'rgba(255, 0, 0, 0)',
+  '0.3': 'rgba(255, 0, 0, 0)',
+  '0.35': 'green'
+  }, true),
+  opacity: 0.6,
+  type: "density",
+  // Paint assumed values in regions where no data is available
+  assumeValues: false
+});// Add the data
+
+for (i = 1; i < 10; i++) {
+    for (j = 1; j < 10; j++) {
+      megafonHeatmap.addData([
+        {lat: i, lng: j, value: 1}
+      ]);
+    }
+}
+// Add the layer to the map
+map.addLayer(new H.map.layer.TileLayer(megafonHeatmap));
+
+
+function draw_layer(heatmap) {
+
+}
+
+
+// Create a provider for a semi-transparent heat map:
+var mtsHeatmap = new H.data.heatmap.Provider({
+  colors: new H.data.heatmap.Colors({
+  '0': 'rgba(255, 0, 0, 0)',
+  '0.3': 'rgba(255, 0, 0, 0)',
+  '0.4': 'red'
+  }, true),
+  opacity: 0.6,
+  type: "density",
+  // Paint assumed values in regions where no data is available
+  assumeValues: false
+});// Add the data
+
+var i;
+var j;
+for (i = 10; i < 20; i++) {
+    for (j = 10; j < 20; j++) {
+      mtsHeatmap.addData([
+        {lat: i, lng: j, value: 1}
+      ]);
+    }
+}
+// Add the layer to the map
+map.addLayer(new H.map.layer.TileLayer(mtsHeatmap));
+
+
+// Create a provider for a semi-transparent heat map:
+var beelineHeatmap = new H.data.heatmap.Provider({
+  colors: new H.data.heatmap.Colors({
+  '0': 'rgba(255, 0, 0, 0)',
+  '0.3': 'rgba(255, 0, 0, 0)',
+  '0.4': 'yellow'
+  }, true),
+  opacity: 0.6,
+  type: "density",
+  // Paint assumed values in regions where no data is available
+  assumeValues: false
+});// Add the data
+
+for (i = 20; i < 30; i++) {
+    for (j = 20; j < 30; j++) {
+      beelineHeatmap.addData([
+        {lat: i, lng: j, value: 1}
+      ]);
+    }
+}
+// Add the layer to the map
+map.addLayer(new H.map.layer.TileLayer(beelineHeatmap));
+
+
+        </script>

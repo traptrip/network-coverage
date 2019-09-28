@@ -1,0 +1,4 @@
+peewee
+requests
+flask
+pandas
