@@ -198,25 +198,82 @@ Number.prototype.toMMSS = function () {
 
 
 // Create a provider for a semi-transparent heat map:
-var heatmapProvider = new H.data.heatmap.Provider({
+var megafonHeatmap = new H.data.heatmap.Provider({
   colors: new H.data.heatmap.Colors({
-  '0': 'blue',
-  '0.5': 'yellow',
-  '1': 'red'
+  '0': 'rgba(255, 0, 0, 0)',
+  '0.3': 'rgba(255, 0, 0, 0)',
+  '0.35': 'green'
   }, true),
-  opacity: 0.75,
-  type: "value",
+  opacity: 0.6,
+  type: "density",
   // Paint assumed values in regions where no data is available
   assumeValues: false
 });// Add the data
 
-heatmapProvider.addData([
-  {lat: 52, lng: 50, value: 1},
-  {lat: 53, lng: 50, value: 2}
-]);
-
+for (i = 1; i < 10; i++) {
+    for (j = 1; j < 10; j++) {
+      megafonHeatmap.addData([
+        {lat: i, lng: j, value: 1},
+      ]);
+    }
+}
 // Add the layer to the map
-map.addLayer(new H.map.layer.TileLayer(heatmapProvider));
+map.addLayer(new H.map.layer.TileLayer(megafonHeatmap));
+
+
+function draw_layer(heatmap, ) {
+
+}
+
+
+// Create a provider for a semi-transparent heat map:
+var mtsHeatmap = new H.data.heatmap.Provider({
+  colors: new H.data.heatmap.Colors({
+  '0': 'rgba(255, 0, 0, 0)',
+  '0.3': 'rgba(255, 0, 0, 0)',
+  '0.4': 'red'
+  }, true),
+  opacity: 0.6,
+  type: "density",
+  // Paint assumed values in regions where no data is available
+  assumeValues: false
+});// Add the data
+
+var i;
+var j;
+for (i = 10; i < 20; i++) {
+    for (j = 10; j < 20; j++) {
+      mtsHeatmap.addData([
+        {lat: i, lng: j, value: 1},
+      ]);
+    }
+}
+// Add the layer to the map
+map.addLayer(new H.map.layer.TileLayer(mtsHeatmap));
+
+
+// Create a provider for a semi-transparent heat map:
+var beelineHeatmap = new H.data.heatmap.Provider({
+  colors: new H.data.heatmap.Colors({
+  '0': 'rgba(255, 0, 0, 0)',
+  '0.3': 'rgba(255, 0, 0, 0)',
+  '0.4': 'yellow'
+  }, true),
+  opacity: 0.6,
+  type: "density",
+  // Paint assumed values in regions where no data is available
+  assumeValues: false
+});// Add the data
+
+for (i = 20; i < 30; i++) {
+    for (j = 20; j < 30; j++) {
+      beelineHeatmap.addData([
+        {lat: i, lng: j, value: 1},
+      ]);
+    }
+}
+// Add the layer to the map
+map.addLayer(new H.map.layer.TileLayer(beelineHeatmap));
 
 
 calculateRouteFromAtoB (platform);
