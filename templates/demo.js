@@ -103,8 +103,6 @@ function openBubble(position, text){
 
 
 function addRouteShapeToMap(route){
-
-
     var lineString = new H.geo.LineString(),
         polyline;
 

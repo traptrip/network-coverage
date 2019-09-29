@@ -48,7 +48,7 @@
         <div class="box" id="transport">
    <div class="div1">
           <h2 class="common-title car" style="margin-top:40px;">Передвигаюсь<br> на машине</h2>
-          <a class="blue-btn car" href="#request" style="margin-left:250px;">Указать путь следования</a>
+          <a class="blue-btn car" href="#request" style="margin-left:250px;" onclick="send()">Указать путь следования</a>
 
    </div>
    <div class="div2">
@@ -105,22 +105,30 @@
   </style>
   
   <script>
-  var socket = new WebSocket("ws://192.168.1.230:8765");
-socket.onopen = function() {
-  alert("Соединение установлено.");
-};
+
 
 function send(){
 
-    var address = document.getElementById("address").value;
-    var client_phone = document.getElementById("client_phone").value;
-    var client_name = document.getElementById("client_name").value;
-    var data = {"jsonrpc": "2.0",
-                "method": "add_task",
-                "params": {'client_name': client_name,
-                           'address': address,
-                           'client_phone': client_phone},
+    function httpGet(theUrl)
+    {
+        var data = {"jsonrpc": "2.0",
+                "method": "get.train.nums",
+                "params": {'"date":"30.09.2019",
+                        "code0":"2040000",
+                        "code1":"2000000"},
                 "id": 0};
+
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+        alert('sdsda');
+        xmlHttp.send(data);
+        alert('sdsda');
+        return xmlHttp.responseText;
+    }
+    httpGet('http://192.168.43.183/api')
+
+
                 
     d = JSON.stringify(data);
     socket.send(d);
