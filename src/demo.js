@@ -262,80 +262,47 @@ function logEvent(str) {
 
 setUpClickListener(map);
 
-// Create a provider for a semi-transparent heat map:
-var megafonHeatmap = new H.data.heatmap.Provider({
-  colors: new H.data.heatmap.Colors({
-  '0': 'rgba(255, 0, 0, 0)',
-  '0.3': 'rgba(255, 0, 0, 0)',
-  '0.35': 'green'
-  }, true),
-  opacity: 0.6,
-  type: "density",
-  // Paint assumed values in regions where no data is available
-  assumeValues: false
-});// Add the data
+// 01 мтс
+// 02 мегафон
+// 20 теле2
+// 99 билайн
+var operators = {1: 'rgba(255, 0, 0, 0.6)',
+                 2: 'rgba(0, 128, 0, 0.6)',
+                 20: 'rgba(1, 1, 1, 0.6)',
+                 99: 'rgba(255, 255, 0, 0.7)'
+            };
 
-for (i = 1; i < 10; i++) {
-    for (j = 1; j < 10; j++) {
-      megafonHeatmap.addData([
-        {lat: i, lng: j, value: 1},
-      ]);
-    }
+var json_file = {
+    "Result": [
+        {"lat":55.4727,
+         "lon":49.0652,
+         "op":99,
+         "range":1000,
+         "type":"GSM"},
+        {"lat":55.5000,
+         "lon":49.0800,
+         "op":2,
+         "range":1000,
+         "type":"GSM"}
+
+]};
+
+function addCircleToMap(map, json_file){
+  for (i = 0; i < json_file['Result'].length; i++) {
+      map.addObject(new H.map.Circle(
+          // The central point of the circle
+          {lat: json_file['Result'][i]['lat'], lng: json_file['Result'][i]['lon']},
+          // The radius of the circle in meters
+          json_file['Result'][i]['range'],
+          {
+              style: {
+                  strokeColor: 'rgba(255, 255, 255, 1)', // Color of the perimeter
+                  lineWidth: 2,
+                  fillColor: operators[json_file['Result'][i]['op']]  // Color of the circle item['operator']
+              }
+          }
+      ));
+  }
 }
-// Add the layer to the map
-map.addLayer(new H.map.layer.TileLayer(megafonHeatmap));
-
-
-function draw_layer(heatmap, ) {
-
-}
-
-
-// Create a provider for a semi-transparent heat map:
-var mtsHeatmap = new H.data.heatmap.Provider({
-  colors: new H.data.heatmap.Colors({
-  '0': 'rgba(255, 0, 0, 0)',
-  '0.3': 'rgba(255, 0, 0, 0)',
-  '0.4': 'red'
-  }, true),
-  opacity: 0.6,
-  type: "density",
-  // Paint assumed values in regions where no data is available
-  assumeValues: false
-});// Add the data
-
-var i;
-var j;
-for (i = 10; i < 20; i++) {
-    for (j = 10; j < 20; j++) {
-      mtsHeatmap.addData([
-        {lat: i, lng: j, value: 1},
-      ]);
-    }
-}
-// Add the layer to the map
-map.addLayer(new H.map.layer.TileLayer(mtsHeatmap));
-
-
-// Create a provider for a semi-transparent heat map:
-var beelineHeatmap = new H.data.heatmap.Provider({
-  colors: new H.data.heatmap.Colors({
-  '0': 'rgba(255, 0, 0, 0)',
-  '0.3': 'rgba(255, 0, 0, 0)',
-  '0.4': 'yellow'
-  }, true),
-  opacity: 0.6,
-  type: "density",
-  // Paint assumed values in regions where no data is available
-  assumeValues: false
-});// Add the data
-
-for (i = 20; i < 30; i++) {
-    for (j = 20; j < 30; j++) {
-      beelineHeatmap.addData([
-        {lat: i, lng: j, value: 1},
-      ]);
-    }
-}
-// Add the layer to the map
-map.addLayer(new H.map.layer.TileLayer(beelineHeatmap));
+addCircleToMap(map, json_file);
+assert(H.map.ViewPort.padding)
